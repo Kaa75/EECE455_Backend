@@ -31,3 +31,6 @@ Complete all required work by Monday morning.
 
 Team Meeting:
 Ensure timely submission so we can review everything in our scheduled meeting.
+
+### Contributers
+- [Karim Abboud](https://github.com/Kaa75)
