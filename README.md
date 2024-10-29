@@ -6,6 +6,8 @@ Each team member should create a dedicated branch for their assigned cipher, usi
 [YourName]/[CipherName]
 If you are working on multiple ciphers, create a separate branch for each.
 
+Also as We Said we will use Flask and FastAPI
+
 ## Encryption/Decryption Implementation
 
 Complete the encryption and decryption functionality for your assigned cipher(s) according to project requirements.
