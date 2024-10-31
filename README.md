@@ -37,3 +37,4 @@ Ensure timely submission so we can review everything in our scheduled meeting.
 ### Contributers
 - [Karim Abboud](https://github.com/Kaa75)
 - [Ranam Hamoud](https://github.com/ranamkhamoud)
+- [Kevin Kfoury](https://github.com/SeeKraken1)
