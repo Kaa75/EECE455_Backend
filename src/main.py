@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from flask import Flask
 from controllers import (
     affine_controller,
     vigenere_controller,
@@ -8,10 +8,12 @@ from controllers import (
     euclid_controller,
 )
 
-app = FastAPI()
+app = Flask(__name__)
 
 
 # Register routes
+app.add_url_rule('/encrypt', view_func=hill_controller.encrypt_route, methods=['GET'])
+app.add_url_rule('/decrypt', view_func=hill_controller.decrypt_route, methods=['GET'])
 
 
 
