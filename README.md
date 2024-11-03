@@ -36,6 +36,7 @@ Ensure timely submission so we can review everything in our scheduled meeting.
 
 ### Contributers
 - [Karim Abboud](https://github.com/Kaa75)
+- [Omar Ramadan](https://github.com/omarram811)
 - [Ranam Hamoud](https://github.com/ranamkhamoud)
 - [Kevin Kfoury](https://github.com/SeeKraken1)
 - [Hadi Al Mubasher](https://github.com/hadi-mubasher)
