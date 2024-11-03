@@ -12,10 +12,10 @@ def encrypt():
     text = plaintext obtained from the user
     key = key obtained from the user 
     '''
-   text = request.args.get('text', '')
-   key = request.args.get('key', '')
-   if not is_valid_key(key):
-        return jsonify({"error": "Invalid key. Key must be a string of alphabetic characters only."}), 400
+    text = request.args.get('text', '')
+    key = request.args.get('key', '')
+    if not is_valid_key(key):
+     return jsonify({"error": "Invalid key. Key must be a string of alphabetic characters only."}), 400
 
     # Call the Playfair encryption function
     encrypted_text = playfair_encryption(text, key)
