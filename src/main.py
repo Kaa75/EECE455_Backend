@@ -23,7 +23,7 @@ cipher_controllers = {
 }
 
 # Encryption route
-@app.route('/encrypt/<cipher>', methods=['POST'])
+@app.route('/encrypt/playfair', methods=['POST'])
 def encrypt_route(cipher):
     data = request.get_json()
     controller = cipher_controllers.get(cipher)
@@ -39,7 +39,7 @@ def encrypt_route(cipher):
         return jsonify({'error': str(e)}), 500
 
 # Decryption route
-@app.route('/decrypt/<cipher>', methods=['POST'])
+@app.route('/decrypt/playfair', methods=['POST'])
 def decrypt_route(cipher):
     data = request.get_json()
     controller = cipher_controllers.get(cipher)
