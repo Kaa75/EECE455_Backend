@@ -1,6 +1,6 @@
 import string
 
-alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'  # I and J are typically combined for Playfair
+alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'  # I and J are combined when performing Playfair
 
 def create_playfair_key_matrix(key):
     key = ''.join(sorted(set(key), key=key.index)).upper().replace('J', 'I')
