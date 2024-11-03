@@ -55,3 +55,24 @@ The Mono-Alphabetic Cipher API provides encryption and decryption using a substi
   {
     "decrypted_text": "hello"
   }
+
+## Setup Instructions:
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
+
+2. **Install Dependencies:**:
+   ```bash
+   pip install flask
+
+3. **Run the Server**:
+   ```bash
+   python main.py
+
+## Testing:
+To run the tests for the Mono-Alphabetic cipher:
+1. Navigate to the project root directory.
+2. Run the tests:
+   ```bash
+   python -m unittest discover -s tests
