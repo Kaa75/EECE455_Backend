@@ -18,7 +18,7 @@ def encrypt_route():
         return jsonify({"error": "Invalid key. Key must be a string of alphabetic characters only."}), 400
 
     # Call the Playfair encryption function
-    encrypted_text = playfair_encryption(plaintext, key)
+    encrypted_text = playfair_encryption(text, key)
     return jsonify({"ciphertext": encrypted_text})
 
 def playfair_decrypt():
