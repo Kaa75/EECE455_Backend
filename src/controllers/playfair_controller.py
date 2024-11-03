@@ -6,7 +6,7 @@ def is_valid_key(key):
     # Check if key is a string and contains only alphabetic characters
     return isinstance(key, str) and key.isalpha()
 
-def encrypt_route():
+def encrypt():
   '''Encrypts plaintext using Playfair cipher after getting the necessary input parameters from the user.
     parameters:
     text = plaintext obtained from the user
@@ -21,7 +21,7 @@ def encrypt_route():
     encrypted_text = playfair_encryption(text, key)
     return jsonify({"ciphertext": encrypted_text})
 
-def playfair_decrypt():
+def decrypt():
     '''Decrypts ciphertext using Playfair cipher after getting the necessary input parameters from the user.
     parameters:
     text = ciphertext obtained from the user
