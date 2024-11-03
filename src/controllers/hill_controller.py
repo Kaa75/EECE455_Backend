@@ -33,7 +33,6 @@ def encrypt_route():
     """
     text = request.args.get('text', '')
     key = request.args.get('key', '')
-    cipher = request.args.get('cipher', '').lower()
 
 
 
@@ -72,7 +71,6 @@ def decrypt_route():
     """
     text = request.args.get('text', '')
     key = request.args.get('key', '')
-    cipher = request.args.get('cipher', '').lower()
 
 
 
