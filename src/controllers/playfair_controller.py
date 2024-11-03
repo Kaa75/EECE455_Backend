@@ -22,6 +22,11 @@ def encrypt_route():
     return jsonify({"ciphertext": encrypted_text})
 
 def playfair_decrypt():
+    '''Decrypts ciphertext using Playfair cipher after getting the necessary input parameters from the user.
+    parameters:
+    text = ciphertext obtained from the user
+    key = key obtained from the user 
+    '''
     data = request.get_json()
     ciphertext = data.get('ciphertext', '')
     key = data.get('key', '')
