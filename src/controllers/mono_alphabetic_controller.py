@@ -1,7 +1,7 @@
-from flask import request, jsonify
-from src.services.mono_alphabetic_service import encrypt_text, decrypt_text
+from flask import jsonify
+from services.mono_alphabetic_service import encrypt_text, decrypt_text
 
-def encrypt_route():
+def encrypt(request):
     """
     Encrypts text using a mono-alphabetic cipher.
 
@@ -15,9 +15,10 @@ def encrypt_route():
         - 'encrypted_text' (str): The encrypted version of the input text.
       In case of errors, returns a JSON response with an error message and status code 400.
     """
-    text = request.args.get('text', '')
-    key = request.args.get('key', '')
-    cipher = request.args.get('cipher', '').lower()
+    text = request.get('inputText', '')
+    key = request.get('keyString', '')
+    cipher = request.get('cipher', '').lower()
+
 
     if cipher != 'mono_alphabetic':
         return jsonify({'error': 'Invalid cipher type. Use "cipher=mono_alphabetic".'}), 400
@@ -28,7 +29,7 @@ def encrypt_route():
     encrypted_text = encrypt_text(text, key)
     return jsonify({'encrypted_text': encrypted_text})
 
-def decrypt_route():
+def decrypt(request):
     """
     Decrypts text encrypted with a mono-alphabetic cipher.
 
@@ -42,9 +43,9 @@ def decrypt_route():
         - 'decrypted_text' (str): The decrypted version of the input text.
       In case of errors, returns a JSON response with an error message and status code 400.
     """
-    text = request.args.get('text', '')
-    key = request.args.get('key', '')
-    cipher = request.args.get('cipher', '').lower()
+    text = request.get('inputText', '')
+    key = request.get('keyString', '')
+    cipher = request.get('cipher', '').lower()
 
     if cipher != 'mono_alphabetic':
         return jsonify({'error': 'Invalid cipher type. Use "cipher=mono_alphabetic".'}), 400
