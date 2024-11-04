@@ -33,8 +33,7 @@ def encrypt_route(cipher):
     
     try:
         result = controller.encrypt(data)
-        print(result)
-        return jsonify({'encrypted_text': result})
+        return result
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -49,7 +48,7 @@ def decrypt_route(cipher):
     
     try:
         result = controller.decrypt(data)
-        return jsonify({'decrypted_text': result})
+        return result
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
