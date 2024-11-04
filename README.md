@@ -1,42 +1,74 @@
-# Branch and Development Workflow
+# Extended Euclid Algorithm API
 
-## Branch Creation
-Each team member should create a dedicated branch for their assigned cipher, using the following format for branch names:
+## Overview
+The Extended Euclidean Algorithm API calculates the modular inverse of a number under a given modulus. This algorithm is used extensively in cryptographic applications, particularly in modular arithmetic operations required in ciphers and other mathematical computations.
 
-[YourName]/[CipherName]
-If you are working on multiple ciphers, create a separate branch for each.
+## API Endpoints
+### 1. Calculate Modular Inverse
+- **Endpoint**: `/euclid/encrypt`
+- **Method**: `GET`
+- **Parameters**:
+  - `a` (int): The number for which the modular inverse is calculated.
+  - `mod` (int): The modulus under which to calculate the inverse.
+  - `cipher` (str): Must be set to `'euclid'`.
+- **Response**:
+  - **Success**: `{ "inverse": inverse_value, "table": "formatted Euclidean table" }`
+  - **Error**: `{ "error": "error message" }`, status code 400.
 
-Also as We Said we will use Flask
+### 2. Decryption Endpoint (Unsupported)
+- **Endpoint**: `/euclid/decrypt`
+- **Method**: `GET`
+- **Response**: Always returns an error since decryption is not supported for the Euclidean algorithm.
+  - **Error**: `{ "error": "Decrypt not supported for Euclidean cipher." }`, status code 400.
 
-## Encryption/Decryption Implementation
+## Input/Output Formats
+- **Input Example (GCD=1)**:
+  ```json
+  {
+    "a": 3,
+    "mod": 11,
+    "cipher": "euclid"
+  }
 
-Complete the encryption and decryption functionality for your assigned cipher(s) according to project requirements.
-If you are also responsible for implementing specific API endpoints, ensure those are fully developed, tested, and documented.
-Commit and Pull Request Protocol
+- **Output Example (GCD=1)**:
+  ```json
+  {
+  "inverse": 4,
+  "table": "formatted Euclidean table"
+  }
 
-# Do not push directly to the main branch.
-Submit all work through pull requests for review. Ensure each pull request clearly indicates the functionality implemented and any associated tests.
+- **Input Example (GCD!=1)**:
+  ```json
+  {
+    "a": 2,
+    "mod": 4,
+    "cipher": "euclid"
+  }
 
-### Documentation
-After completing all encryption and decryption functions, replace this file with a comprehensive README.md. The README should include:
+- **Output Example  (GCD!=1)**:
+  ```json
+  {
+  "error": "No modular inverse for 2 mod 4",
+  "table": "formatted Euclidean table"
+  }
 
-- Overview of each cipher and its purpose
+## Setup Instructions:
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
 
-- Details on API endpoints, including input/output formats
-- Setup instructions and any dependencies
-- Instructions for testing
+2. **Install Dependencies:**:
+   ```bash
+   pip install flask
 
+3. **Run the Server**:
+   ```bash
+   python main.py
 
-# Project Deadlines
-Mandatory Part (Project 1):
-Complete all required work by Monday morning.
-
-Team Meeting:
-Ensure timely submission so we can review everything in our scheduled meeting.
-
-### Contributers
-- [Karim Abboud](https://github.com/Kaa75)
-- [Omar Ramadan](https://github.com/omarram811)
-- [Ranam Hamoud](https://github.com/ranamkhamoud)
-- [Kevin Kfoury](https://github.com/SeeKraken1)
-- [Hadi Al Mubasher](https://github.com/hadi-mubasher)
+## Testing:
+To run the tests for the Extended Euclidean algorithm:
+1. Navigate to the project root directory.
+2. Run the tests:
+   ```bash
+   python -m unittest discover -s tests
