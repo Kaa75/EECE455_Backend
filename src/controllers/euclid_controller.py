@@ -1,7 +1,7 @@
 from flask import request, jsonify
-from src.services.euclid_service import modular_inverse, format_table
+from services.euclid_service import modular_inverse, format_table
 
-def encrypt_route():
+def encrypt():
     """
     Calculates the modular inverse of a given number using the Euclidean algorithm.
 
@@ -29,7 +29,7 @@ def encrypt_route():
 
     return jsonify({'inverse': inverse, 'table': format_table(table)})
 
-def decrypt_route():
+def decrypt():
     """
     Returns an error response indicating that decryption is unsupported for the Euclidean cipher.
 
