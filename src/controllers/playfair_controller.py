@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from src.services.playfair_service import playfair_encryption, playfair_decryption, create_playfair_key_matrix
+from services.playfair_service import playfair_encryption, playfair_decryption, create_playfair_key_matrix
 
 # Define a helper function to validate the key
 def is_valid_key(key):
