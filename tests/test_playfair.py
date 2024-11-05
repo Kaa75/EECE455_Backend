@@ -1,6 +1,6 @@
 import unittest
-from src.services.playfair_service import playfair_encryption, playfair_decryption, create_playfair_key_matrix
-from src.controllers.playfair_controller import encrypt,decrypt
+from services.playfair_service import playfair_encryption, playfair_decryption, create_playfair_key_matrix
+from controllers.playfair_controller import encrypt,decrypt
 
 class TestPlayFairCipher(unittest.TestCase):
   '''Applying some testcases to check functionality'''
