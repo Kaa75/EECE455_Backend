@@ -7,7 +7,7 @@ def is_valid_key(key):
     return isinstance(key, str) and key.isalpha()
 
 def encrypt(request):
-  '''Encrypts plaintext using Playfair cipher after getting the necessary input parameters from the user.
+    '''Encrypts plaintext using Playfair cipher after getting the necessary input parameters from the user.
     parameters:
     text = plaintext obtained from the user
     key = key obtained from the user 
