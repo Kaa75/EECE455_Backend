@@ -19,8 +19,5 @@ class TestPlayFairCipher(unittest.TestCase):
     decrypted_text = playfair_decryption(ciphertext,key)
     self.assertIsInstance(decrypted_text,str)
     self.assertEqual(plaintext,decrypted_text)
-  def test_keys(self):
-    '''Testing an invalid key to see if an error gets raised'''
-
 if __name__ == "__main__":
     unittest.main()
