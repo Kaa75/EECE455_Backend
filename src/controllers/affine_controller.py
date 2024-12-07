@@ -1,7 +1,7 @@
-from flask import request, jsonify
+from flask import jsonify
 from services.affine_service import encrypt_text, decrypt_text, crack_text
 
-def encrypt_route():
+def encrypt(request):
     """
     Encrypts the given text using the Affine cipher with the provided 'a' and 'b' values.
 
@@ -16,10 +16,7 @@ def encrypt_route():
     text = request.args.get('text', '')
     key = request.args.get('key', '')
     cipher = request.args.get('cipher', '').lower()
-
-    if cipher != 'affine':
-        return jsonify({'error': 'Invalid cipher type. Use "cipher=affine".'}), 400
-
+    print(text, key, cipher)
     try:
         # Parse 'key' as [a, b] for Affine cipher
         a, b = eval(key)
@@ -28,7 +25,7 @@ def encrypt_route():
     except (ValueError, SyntaxError) as e:
         return jsonify({'error': f'Invalid input: {str(e)}'}), 400
 
-def decrypt_route():
+def decrypt(request):
     """
     Decrypts the given text using the Affine cipher with the provided 'a' and 'b' values.
 
@@ -55,7 +52,7 @@ def decrypt_route():
     except (ValueError, SyntaxError) as e:
         return jsonify({'error': f'Invalid input: {str(e)}'}), 400
 
-def crack_route():
+def bruteforce(request):
     """
     Determines 'a' and 'b' values based on the two most frequent letters
     in the ciphertext, mapped to 'E' and 'T' in plaintext.

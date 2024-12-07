@@ -16,7 +16,7 @@ def format_matrix(matrix):
         matrix = matrix.tolist()
     return str(matrix)
 
-def encrypt_route():
+def encrypt():
     """
     Encrypts the given text using the Hill cipher with the provided key matrix.
 
@@ -53,7 +53,7 @@ def encrypt_route():
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
 
-def decrypt_route():
+def decrypt():
     """
     Decrypts the given text using the Hill cipher with the provided key matrix and finds the inverse matrix.
 
