@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from src.services.hill_service import encrypt_text, decrypt_text, mod_inverse_matrix
+from services.hill_service import encrypt_text, decrypt_text, mod_inverse_matrix
 import numpy as np
 
 def format_matrix(matrix):
