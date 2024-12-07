@@ -1,5 +1,5 @@
 from flask import jsonify
-from src.services.affine_service import encrypt_text, decrypt_text, crack_text
+from services.affine_service import encrypt_text, decrypt_text, crack_text
 
 def encrypt(data):
     """

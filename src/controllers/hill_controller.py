@@ -1,5 +1,5 @@
 from flask import jsonify
-from src.services.hill_service import encrypt_text, decrypt_text
+from services.hill_service import encrypt_text, decrypt_text
 import numpy as np
 
 def parse_key_string(key_string):

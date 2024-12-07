@@ -1,6 +1,5 @@
 import unittest
-from services.playfair_service import playfair_encryption, playfair_decryption, create_playfair_key_matrix
-from controllers.playfair_controller import encrypt,decrypt
+from src.services.playfair_service import playfair_encryption, playfair_decryption, create_playfair_key_matrix
 
 class TestPlayFairCipher(unittest.TestCase):
   '''Applying some testcases to check functionality'''
@@ -14,7 +13,7 @@ class TestPlayFairCipher(unittest.TestCase):
   def test_decryption(self):
     '''Decrypting a text, validating its type, and checking for a mismatch between the ciphertext and the plaintext'''
     key = "PROBLEMS"
-    plaintext = "SHE WENT TO THE STORE"
+    plaintext = "SHEWENTTOTHESTORE"
     ciphertext = "AGMVMKQYQBYTMAQBPM"
     decrypted_text = playfair_decryption(ciphertext,key)
     self.assertIsInstance(decrypted_text,str)
