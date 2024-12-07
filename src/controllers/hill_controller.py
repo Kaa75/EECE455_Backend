@@ -1,93 +1,90 @@
-from flask import request, jsonify
-from services.hill_service import encrypt_text, decrypt_text, mod_inverse_matrix
+from flask import jsonify
+from src.services.hill_service import encrypt_text, decrypt_text
 import numpy as np
 
-def format_matrix(matrix):
+def parse_key_string(key_string):
     """
-    Format a matrix as a regular Python-style list without extra spaces or line breaks.
+    Converts a comma-separated key string into a numpy matrix.
 
     Parameters:
-    - matrix: numpy.ndarray or list, the matrix to be formatted as a string.
+    - key_string: str, the key string in the format "1,2,3,4" for a 2x2 or 3x3 matrix.
 
     Returns:
-    - str: the matrix in a formatted string as a Python list.
+    - numpy.ndarray: the parsed matrix.
     """
-    if isinstance(matrix, np.ndarray):
-        matrix = matrix.tolist()
-    return str(matrix)
+    try:
+        key_values = list ( map ( int, key_string.split ( ',' ) ) )
+        matrix_size = int ( len ( key_values ) ** 0.5 )
+        if matrix_size ** 2 != len ( key_values ):
+            raise ValueError ( "Key string must represent a square matrix." )
+        return np.array ( key_values ).reshape ( matrix_size, matrix_size )
+    except ValueError as e:
+        raise ValueError ( f"Invalid key string format: {str ( e )}" )
 
-def encrypt():
+
+def encrypt(data):
     """
     Encrypts the given text using the Hill cipher with the provided key matrix.
 
-    Parameters:
-    - text: str, the text to encrypt, obtained from request arguments.
-    - key: str, the key matrix in list format, obtained from request arguments.
-    - cipher: str, the cipher type, expected to be 'hill', obtained from request arguments.
+    Parameters (JSON payload):
+    - inputText: str, the text to encrypt.
+    - keyString: str, the key string in the format "1,2,3,4".
+    - alphabet: str, the alphabet to use for encryption.
+    - cipher: str, the cipher type, expected to be 'hill'.
 
     Returns:
     - JSON response with:
-        - matrix: str, the key matrix formatted as a string.
         - encrypted_text: str, the encrypted text.
-      If there are errors, returns a JSON response with an error message and a 400 status code.
     """
-    text = request.args.get('text', '')
-    key = request.args.get('key', '')
-
-
-
-    try:
-        key_matrix = np.array(eval(key))  # Safe only with controlled input
-    except:
-        return jsonify({'error': 'Invalid key format. Provide a valid 2x2 or 3x3 matrix in list format.'}), 400
-
-    if key_matrix.shape[0] != key_matrix.shape[1] or key_matrix.shape[0] not in [2, 3]:
-        return jsonify({'error': 'Matrix must be 2x2 or 3x3.'}), 400
+    input_text = data.get ( 'inputText', '' )
+    key_string = data.get ( 'keyString', '' )
+    alphabet = data.get ( 'alphabet', '' )
+    cipher = data.get ( 'cipher', '' ).lower ()
 
     try:
-        encrypted_text = encrypt_text(text, key_matrix)
-        return jsonify({
-            'matrix': format_matrix(key_matrix),
-            'encrypted_text': encrypted_text
-        })
+        if cipher != 'hill':
+            raise ValueError ( "Invalid cipher type. Only 'hill' is supported." )
+        if not alphabet:
+            raise ValueError ( "Alphabet cannot be empty." )
+
+        # Parse the key string into a matrix
+        key_matrix = parse_key_string ( key_string )
+        encrypted_text = encrypt_text ( input_text, key_matrix, alphabet )
+
+        return jsonify ( {'encrypted_text': encrypted_text} )
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify ( {'error': str ( e )} ), 400
 
-def decrypt():
+
+def decrypt(data):
     """
-    Decrypts the given text using the Hill cipher with the provided key matrix and finds the inverse matrix.
+    Decrypts the given text using the Hill cipher with the provided key matrix.
 
-    Parameters:
-    - text: str, the text to decrypt, obtained from request arguments.
-    - key: str, the key matrix in list format, obtained from request arguments.
-    - cipher: str, the cipher type, expected to be 'hill', obtained from request arguments.
+    Parameters (JSON payload):
+    - inputText: str, the text to decrypt.
+    - keyString: str, the key string in the format "1,2,3,4".
+    - alphabet: str, the alphabet to use for decryption.
+    - cipher: str, the cipher type, expected to be 'hill'.
 
     Returns:
     - JSON response with:
-        - matrix: str, the key matrix formatted as a string.
-        - inverse_matrix: str, the inverse of the key matrix formatted as a string.
         - decrypted_text: str, the decrypted text.
-      If there are errors, returns a JSON response with an error message and a 400 status code.
     """
-    text = request.args.get('text', '')
-    key = request.args.get('key', '')
-
-
-
-    try:
-        key_matrix = np.array(eval(key))  # Safe only with controlled input
-    except:
-        return jsonify({'error': 'Invalid key format. Provide a valid 2x2 or 3x3 matrix in list format.'}), 400
-
-    if key_matrix.shape[0] != key_matrix.shape[1] or key_matrix.shape[0] not in [2, 3]:
-        return jsonify({'error': 'Matrix must be 2x2 or 3x3.'}), 400
+    input_text = data.get ( 'inputText', '' )
+    key_string = data.get ( 'keyString', '' )
+    alphabet = data.get ( 'alphabet', '' )
+    cipher = data.get ( 'cipher', '' ).lower ()
 
     try:
-        decrypted_text, inverse_matrix = decrypt_text(text, key_matrix)
-        return jsonify({
-            'matrix': format_matrix(key_matrix),
-            'inverse_matrix': format_matrix(inverse_matrix),
-            'decrypted_text': decrypted_text
-        })
+        if cipher != 'hill':
+            raise ValueError ( "Invalid cipher type. Only 'hill' is supported." )
+        if not alphabet:
+            raise ValueError ( "Alphabet cannot be empty." )
+
+        # Parse the key string into a matrix
+        key_matrix = parse_key_string ( key_string )
+        decrypted_text, _ = decrypt_text ( input_text, key_matrix, alphabet )
+
+        return jsonify ( {'decrypted_text': decrypted_text} )
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify ( {'error': str ( e )} ), 400

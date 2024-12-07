@@ -1,80 +1,102 @@
 from flask import jsonify
-from services.affine_service import encrypt_text, decrypt_text, crack_text
+from src.services.affine_service import encrypt_text, decrypt_text, crack_text
 
-def encrypt(request):
+def encrypt(data):
     """
-    Encrypts the given text using the Affine cipher with the provided 'a' and 'b' values.
+    Encrypts the given text using the Affine cipher with the provided parameters.
 
-    Parameters:
-    - text: str, the text to encrypt.
-    - key: str, the key in the format "[a,b]", obtained from request arguments.
-    - cipher: str, should be 'affine' for Affine cipher, obtained from request arguments.
+    Parameters (JSON payload):
+    - inputText: str, the text to encrypt.
+    - keyString: str, the key in the format "a,b".
+    - alphabet: str, the alphabet to use for encryption.
+    - cipher: str, should be 'affine' for Affine cipher.
 
     Returns:
     - JSON response with the encrypted text or an error message with a 400 status code.
     """
-    text = request.args.get('text', '')
-    key = request.args.get('key', '')
-    cipher = request.args.get('cipher', '').lower()
-    print(text, key, cipher)
+    input_text = data.get('inputText', '')
+    key_string = data.get('keyString', '')
+    alphabet = data.get('alphabet', '')
+    cipher = data.get('cipher', '').lower()
+
     try:
-        # Parse 'key' as [a, b] for Affine cipher
-        a, b = eval(key)
-        encrypted_text = encrypt_text(text, a, b)
+        # Validate the cipher type
+        if cipher != 'affine':
+            raise ValueError("Invalid cipher type. Only 'affine' is supported.")
+        if not alphabet:
+            raise ValueError("Alphabet cannot be empty.")
+
+        # Parse the key string
+        a, b = map(int, key_string.split(','))
+        encrypted_text = encrypt_text(input_text, a, b, alphabet)
         return jsonify({'encrypted_text': encrypted_text})
     except (ValueError, SyntaxError) as e:
         return jsonify({'error': f'Invalid input: {str(e)}'}), 400
 
-def decrypt(request):
+def decrypt(data):
     """
-    Decrypts the given text using the Affine cipher with the provided 'a' and 'b' values.
+    Decrypts the given text using the Affine cipher with the provided parameters.
 
-    Parameters:
-    - text: str, the text to decrypt.
-    - key: str, the key in the format "[a,b]", obtained from request arguments.
-    - cipher: str, should be 'affine' for Affine cipher, obtained from request arguments.
+    Parameters (JSON payload):
+    - inputText: str, the text to decrypt.
+    - keyString: str, the key in the format "a,b".
+    - alphabet: str, the alphabet to use for decryption.
+    - cipher: str, should be 'affine' for Affine cipher.
 
     Returns:
     - JSON response with the decrypted text or an error message with a 400 status code.
     """
-    text = request.args.get('text', '')
-    key = request.args.get('key', '')
-    cipher = request.args.get('cipher', '').lower()
-
-    if cipher != 'affine':
-        return jsonify({'error': 'Invalid cipher type. Use "cipher=affine".'}), 400
+    input_text = data.get('inputText', '')
+    key_string = data.get('keyString', '')
+    alphabet = data.get('alphabet', '')
+    cipher = data.get('cipher', '').lower()
 
     try:
-        # Parse 'key' as [a, b] for Affine cipher
-        a, b = eval(key)
-        decrypted_text = decrypt_text(text, a, b)
+        # Validate the cipher type
+        if cipher != 'affine':
+            raise ValueError("Invalid cipher type. Only 'affine' is supported.")
+        if not alphabet:
+            raise ValueError("Alphabet cannot be empty.")
+
+        # Parse the key string
+        a, b = map(int, key_string.split(','))
+        decrypted_text = decrypt_text(input_text, a, b, alphabet)
         return jsonify({'decrypted_text': decrypted_text})
     except (ValueError, SyntaxError) as e:
         return jsonify({'error': f'Invalid input: {str(e)}'}), 400
 
-def bruteforce(request):
+
+def crack(data):
     """
     Determines 'a' and 'b' values based on the two most frequent letters
     in the ciphertext, mapped to 'E' and 'T' in plaintext.
 
-    Parameters:
-    - freq1: str, the most frequent letter in the ciphertext (mapped to 'E').
-    - freq2: str, the second most frequent letter in the ciphertext (mapped to 'T').
+    Parameters (JSON payload):
+    - inputText: str, the ciphertext (not directly used in this function).
+    - keyString: str, the two most frequent letters in the ciphertext (e.g., "J,X").
+    - alphabet: str, the custom alphabet to use.
+    - cipher: str, should be 'affine'.
 
     Returns:
-    - JSON response with 'a' and 'b', or an error message with a 400 status code.
+    - A string in the format "a=..., b=..." or an error message.
     """
-    freq1 = request.args.get('freq1', '')
-    freq2 = request.args.get('freq2', '')
+    input_text = data.get('inputText', '')
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    #alphabet = data.get('alphabet', '')
 
-    if not (freq1 and freq2):
-        return jsonify({'error': 'Missing required parameters: freq1, freq2.'}), 400
+    if not input_text or not alphabet:
+        return "Error: Missing required parameters: inputText or alphabet.", 400
 
     try:
-        a, b = crack_text(freq1, freq2)
-        return jsonify({
-            'a': a,
-            'b': b
-        })
+        # Extract freq1 and freq2 from keyString
+        freq1, freq2 = input_text.split(',')
+
+        # Call the crack_text function
+        a, b = crack_text(freq1, freq2, alphabet)
+
+        # Return the result in the format expected by the frontend
+        return jsonify({"encrypted_text": f"a={a}, b={b}"})
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        return str(e), 400
+    except Exception as e:
+        return "An unexpected error occurred.", 500

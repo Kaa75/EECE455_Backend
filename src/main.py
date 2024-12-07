@@ -27,7 +27,7 @@ cipher_controllers = {
 def encrypt_route(cipher):
     data = request.get_json()
     controller = cipher_controllers.get(cipher)
-    
+
     if controller is None or not hasattr(controller, 'encrypt'):
         return jsonify({'error': f'Encryption method for {cipher} not found.'}), 400
     
@@ -42,7 +42,6 @@ def encrypt_route(cipher):
 def decrypt_route(cipher):
     data = request.get_json()
     controller = cipher_controllers.get(cipher)
-    
     if controller is None or not hasattr(controller, 'decrypt'):
         return jsonify({'error': f'Decryption method for {cipher} not found.'}), 400
     
@@ -52,18 +51,18 @@ def decrypt_route(cipher):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Brute-force decryption route
-@app.route('/bruteforce/<cipher>', methods=['POST'])
+# Crack route
+@app.route('/crack/<cipher>', methods=['POST'])
 def bruteforce_route(cipher):
     data = request.get_json()
     controller = cipher_controllers.get(cipher)
     
-    if controller is None or not hasattr(controller, 'bruteforce'):
-        return jsonify({'error': f'Brute-force method for {cipher} not found.'}), 400
+    if controller is None or not hasattr(controller, 'crack'):
+        return jsonify({'error': f'Crack method for {cipher} not found.'}), 400
     
     try:
-        result = controller.bruteforce(data)
-        return jsonify({'bruteforce_results': result})
+        result = controller.crack(data)
+        return result
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

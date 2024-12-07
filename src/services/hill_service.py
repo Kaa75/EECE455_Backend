@@ -1,10 +1,5 @@
 import numpy as np
-import string
 
-# Constants and dictionaries for character mapping
-ALPHABET = string.ascii_uppercase
-ALPHABET_DICT = {char: idx for idx, char in enumerate(ALPHABET)}
-REVERSE_ALPHABET_DICT = {idx: char for idx, char in enumerate(ALPHABET)}
 
 def mod_inverse_matrix(matrix, mod=26):
     """
@@ -25,8 +20,8 @@ def mod_inverse_matrix(matrix, mod=26):
         raise ValueError("Matrix determinant is zero, inverse does not exist.")
 
     det_inv = pow(det % mod, -1, mod)  # Modular inverse of the determinant
-    matrix_mod_inv = (det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % mod) % mod
-    return matrix_mod_inv.astype(int)
+    adjugate = np.round(det * np.linalg.inv(matrix)).astype(int)  # Adjugate matrix
+    return (det_inv * adjugate % mod).astype(int)
 
 def validate_text_length(text, matrix_size):
     """
@@ -55,73 +50,63 @@ def process_text(text):
     """
     return ''.join([char for char in text if char.isalpha()]).upper()
 
-def text_to_vector(block):
-    """
-    Convert a block of text into a vector of numbers based on alphabetical positions.
-
-    Parameters:
-    - block: str, a block of text.
-
-    Returns:
-    - list of int: a list of numbers representing each character in the block.
-    """
-    return [ALPHABET_DICT[char] for char in block]
-
-def vector_to_text(vector):
-    """
-    Convert a vector of numbers back to text based on alphabetical positions.
-
-    Parameters:
-    - vector: list of int, the vector to convert.
-
-    Returns:
-    - str: the text corresponding to the input vector.
-    """
-    return ''.join(REVERSE_ALPHABET_DICT[num % 26] for num in vector)
-
-def hill_cipher(text, matrix, mode='encrypt'):
+def hill_cipher(text, matrix, alphabet, mode='encrypt'):
     """
     Core function for the Hill cipher, encrypts or decrypts text based on the provided matrix.
 
     Parameters:
     - text: str, the text to encrypt or decrypt.
     - matrix: numpy.ndarray, the matrix used for transformation.
+    - alphabet: str, the custom alphabet to use.
     - mode: str, 'encrypt' for encryption, 'decrypt' for decryption.
 
     Returns:
     - str: the resulting encrypted or decrypted text.
     """
     matrix_size = matrix.shape[0]
-    validate_text_length(text, matrix_size)
+    mod = len(alphabet)
 
+    # Create mappings for the alphabet
+    ALPHABET_DICT = {char: idx for idx, char in enumerate(alphabet)}
+    REVERSE_ALPHABET_DICT = {idx: char for idx, char in enumerate(alphabet)}
+
+    def text_to_vector(block):
+        return [ALPHABET_DICT[char] for char in block]
+
+    def vector_to_text(vector):
+        return ''.join(REVERSE_ALPHABET_DICT[num % mod] for num in vector)
+
+    validate_text_length(text, matrix_size)
     processed_text = process_text(text)
     result_text = ''
+
     for i in range(0, len(processed_text), matrix_size):
         block = processed_text[i:i + matrix_size]
         vector = text_to_vector(block)
 
-        # Encrypt or decrypt
-        transformed_vector = np.dot(matrix, vector) % 26
+        # Perform matrix multiplication
+        transformed_vector = np.dot(matrix, vector) % mod
         result_text += vector_to_text(transformed_vector.astype(int))
 
     # Reinsert non-alphabet characters
     full_result = ''
     j = 0
     for char in text:
-        if char.upper() in ALPHABET:
+        if char.upper() in alphabet:
             full_result += result_text[j]
             j += 1
         else:
             full_result += char
     return full_result
 
-def encrypt_text(text, matrix):
+def encrypt_text(text, matrix, alphabet):
     """
-    Encrypt text using the Hill cipher with the specified key matrix.
+    Encrypt text using the Hill cipher with the specified key matrix and alphabet.
 
     Parameters:
     - text: str, the text to encrypt.
     - matrix: numpy.ndarray, the key matrix used for encryption (2x2 or 3x3).
+    - alphabet: str, the custom alphabet to use.
 
     Returns:
     - str: the encrypted text.
@@ -131,15 +116,16 @@ def encrypt_text(text, matrix):
     """
     if matrix.shape[0] != matrix.shape[1] or matrix.shape[0] not in [2, 3]:
         raise ValueError("Matrix must be 2x2 or 3x3.")
-    return hill_cipher(text, matrix, mode='encrypt')
+    return hill_cipher(text, matrix, alphabet, mode='encrypt')
 
-def decrypt_text(text, matrix):
+def decrypt_text(text, matrix, alphabet):
     """
-    Decrypt text using the Hill cipher with the specified key matrix.
+    Decrypt text using the Hill cipher with the specified key matrix and alphabet.
 
     Parameters:
     - text: str, the text to decrypt.
     - matrix: numpy.ndarray, the key matrix used for decryption (2x2 or 3x3).
+    - alphabet: str, the custom alphabet to use.
 
     Returns:
     - tuple:
@@ -151,6 +137,6 @@ def decrypt_text(text, matrix):
     """
     if matrix.shape[0] != matrix.shape[1] or matrix.shape[0] not in [2, 3]:
         raise ValueError("Matrix must be 2x2 or 3x3.")
-    inverse_matrix = mod_inverse_matrix(matrix)
-    decrypted_text = hill_cipher(text, inverse_matrix, mode='decrypt')
-    return decrypted_text, inverse_matrix.tolist()  # Return inverse matrix for API response
+    inverse_matrix = mod_inverse_matrix(matrix, mod=len(alphabet))
+    decrypted_text = hill_cipher(text, inverse_matrix, alphabet, mode='decrypt')
+    return decrypted_text, inverse_matrix.tolist()
