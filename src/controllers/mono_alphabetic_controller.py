@@ -1,5 +1,30 @@
+import sqlite3
+import os
 from flask import jsonify
 from services.mono_alphabetic_service import encrypt_text, decrypt_text
+
+
+# Helper function to log data into the database
+def log_mono_alphabetic_operation(operation, input_text, key, result_text):
+    try:
+        # Connect to SQLite database
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(current_dir, '../..', 'encryption_log.db')
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Insert log into mono_alphabetic_log table
+        cursor.execute('''
+            INSERT INTO mono_alphabetic_log (operation, input_text, key, output_text)
+            VALUES (?, ?, ?, ?)
+        ''', (operation, input_text, key, result_text))
+
+        # Commit and close connection
+        conn.commit()
+        conn.close()
+
+    except Exception as e:
+        print(f"Error logging Mono-Alphabetic operation: {e}")
 
 def encrypt(request):
     """
@@ -27,6 +52,9 @@ def encrypt(request):
         return jsonify({'error': 'Key must be a 26-character alphabetic string.'}), 400
 
     encrypted_text = encrypt_text(text, key)
+
+    log_mono_alphabetic_operation('encrypt', text, key, encrypted_text)
+
     return jsonify({'encrypted_text': encrypted_text})
 
 def decrypt(request):
@@ -54,4 +82,7 @@ def decrypt(request):
         return jsonify({'error': 'Key must be a 26-character alphabetic string.'}), 400
 
     decrypted_text = decrypt_text(text, key)
+
+    log_mono_alphabetic_operation('decrypt', text, key, decrypted_text)
+
     return jsonify({'decrypted_text': decrypted_text})

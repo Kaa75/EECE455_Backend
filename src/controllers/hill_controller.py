@@ -1,6 +1,31 @@
+import sqlite3
+import os
 from flask import jsonify
 from services.hill_service import encrypt_text, decrypt_text
 import numpy as np
+
+
+# Helper function to log data into the database
+def log_hill_operation(operation, input_text, key_string, alphabet, result_text):
+    try:
+        # Connect to SQLite database
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(current_dir, '../..', 'encryption_log.db')
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Insert log into hill_log table
+        cursor.execute('''
+            INSERT INTO hill_log (operation, input_text, matrix, alphabet, output_text)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (operation, input_text, key_string, alphabet, result_text))
+
+        # Commit and close connection
+        conn.commit()
+        conn.close()
+
+    except Exception as e:
+        print(f"Error logging Hill operation: {e}")
 
 def parse_key_string(key_string):
     """
@@ -51,6 +76,8 @@ def encrypt(data):
         key_matrix = parse_key_string ( key_string )
         encrypted_text = encrypt_text ( input_text, key_matrix, alphabet )
 
+        log_hill_operation('encrypt', input_text, key_string, alphabet, encrypted_text)
+
         return jsonify ( {'encrypted_text': encrypted_text} )
     except ValueError as e:
         return jsonify ( {'error': str ( e )} ), 400
@@ -84,6 +111,8 @@ def decrypt(data):
         # Parse the key string into a matrix
         key_matrix = parse_key_string ( key_string )
         decrypted_text, _ = decrypt_text ( input_text, key_matrix, alphabet )
+
+        log_hill_operation('decrypt', input_text, key_string, alphabet, decrypted_text)
 
         return jsonify ( {'decrypted_text': decrypted_text} )
     except ValueError as e:
