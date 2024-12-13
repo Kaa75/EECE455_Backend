@@ -1,3 +1,15 @@
+# How to Run Backend
+- Download the GitHub repository (either clone or via zip download and extract)
+- Go to backend folder root directory (i.e. `cd EECE455_Backend`)
+- `pip install -r requirements.txt`
+- `cd src` --> `python main.py`
+
+# How to Run Unit Tests
+- From the backend folder root:
+    * To run all unit tests together: `python -m unittest discover -s tests -p "test_*.py"`
+    * To run only one unit test Python file (e.g. Vigenere unit tests): `python -m unittest tests/test_vigenere.py`
+
+
 # Branch and Development Workflow
 
 ## Branch Creation
